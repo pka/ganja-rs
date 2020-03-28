@@ -8,25 +8,25 @@
 // #![feature(const_slice_len)]
 
 use std::fmt;
-use std::ops::{Index,IndexMut,Add,Sub,Mul,BitAnd,BitOr,BitXor,Not};
+use std::ops::{Add, BitAnd, BitOr, BitXor, Index, IndexMut, Mul, Not, Sub};
 
 type float_t = f64;
 
 // use std::f64::consts::PI;
 const PI: float_t = 3.14159265358979323846;
 
-const basis: &'static [&'static str] = &[ "1","e1","e2","e12" ];
+const basis: &'static [&'static str] = &["1", "e1", "e2", "e12"];
 const basis_count: usize = basis.len();
 
-#[derive(Default,Debug,Clone,PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 struct QUAT {
-    mvec: Vec<float_t>
+    mvec: Vec<float_t>,
 }
 
 impl QUAT {
     pub fn zero() -> Self {
         Self {
-            mvec: vec![0.0; basis_count]
+            mvec: vec![0.0; basis_count],
         }
     }
 
@@ -37,9 +37,15 @@ impl QUAT {
     }
 
     // basis vectors are available as methods
-    pub fn e1() -> Self { QUAT::new(1.0, 1) }
-    pub fn e2() -> Self { QUAT::new(1.0, 2) }
-    pub fn e12() -> Self { QUAT::new(1.0, 3) }
+    pub fn e1() -> Self {
+        QUAT::new(1.0, 1)
+    }
+    pub fn e2() -> Self {
+        QUAT::new(1.0, 2)
+    }
+    pub fn e12() -> Self {
+        QUAT::new(1.0, 3)
+    }
 }
 
 impl Index<usize> for QUAT {
@@ -59,19 +65,31 @@ impl IndexMut<usize> for QUAT {
 impl fmt::Display for QUAT {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut n = 0;
-        let ret = self.mvec.iter().enumerate().filter_map(|(i, &coeff)| {
-            if coeff > 0.00001 || coeff < -0.00001 {
-                n = 1;
-                Some(format!("{}{}", 
-                        format!("{:.*}", 7, coeff).trim_end_matches('0').trim_end_matches('.'),
+        let ret = self
+            .mvec
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &coeff)| {
+                if coeff > 0.00001 || coeff < -0.00001 {
+                    n = 1;
+                    Some(format!(
+                        "{}{}",
+                        format!("{:.*}", 7, coeff)
+                            .trim_end_matches('0')
+                            .trim_end_matches('.'),
                         if i > 0 { basis[i] } else { "" }
-                    )
-                )
-            } else {
-                None
-            }
-        }).collect::<Vec<String>>().join(" + ");
-        if n==0 { write!(f,"0") } else { write!(f, "{}", ret) }
+                    ))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(" + ");
+        if n == 0 {
+            write!(f, "0")
+        } else {
+            write!(f, "{}", ret)
+        }
     }
 }
 
@@ -140,18 +158,16 @@ macro_rules! define_binary_op_all(
 
 // TODO define_unary_op
 
-
-
 // Reverse
 // Reverse the order of the basis blades.
 impl QUAT {
-    pub fn Reverse(self: & Self) -> QUAT {
+    pub fn Reverse(self: &Self) -> QUAT {
         let mut res = QUAT::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=a[1];
-        res[2]=a[2];
-        res[3]=-a[3];
+        res[0] = a[0];
+        res[1] = a[1];
+        res[2] = a[2];
+        res[3] = -a[3];
         res
     }
 }
@@ -159,27 +175,27 @@ impl QUAT {
 // Dual
 // Poincare duality operator.
 impl QUAT {
-    pub fn Dual(self: & Self) -> QUAT {
+    pub fn Dual(self: &Self) -> QUAT {
         let mut res = QUAT::zero();
         let a = self;
-        res[0]=-a[3];
-        res[1]=-a[2];
-        res[2]=a[1];
-        res[3]=a[0];
+        res[0] = -a[3];
+        res[1] = -a[2];
+        res[2] = a[1];
+        res[3] = a[0];
         res
     }
 }
 
-impl Not for & QUAT {
+impl Not for &QUAT {
     type Output = QUAT;
 
     fn not(self: Self) -> QUAT {
         let mut res = QUAT::zero();
         let a = self;
-        res[0]=-a[3];
-        res[1]=-a[2];
-        res[2]=a[1];
-        res[3]=a[0];
+        res[0] = -a[3];
+        res[1] = -a[2];
+        res[2] = a[1];
+        res[3] = a[0];
         res
     }
 }
@@ -187,13 +203,13 @@ impl Not for & QUAT {
 // Conjugate
 // Clifford Conjugation
 impl QUAT {
-    pub fn Conjugate(self: & Self) -> QUAT {
+    pub fn Conjugate(self: &Self) -> QUAT {
         let mut res = QUAT::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
         res
     }
 }
@@ -201,13 +217,13 @@ impl QUAT {
 // Involute
 // Main involution
 impl QUAT {
-    pub fn Involute(self: & Self) -> QUAT {
+    pub fn Involute(self: &Self) -> QUAT {
         let mut res = QUAT::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=a[3];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = a[3];
         res
     }
 }
@@ -233,7 +249,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Wedge
 // The outer product. (MEET)
 
@@ -254,7 +269,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Vee
 // The regressive product. (JOIN)
@@ -277,7 +291,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Dot
 // The inner product.
 
@@ -298,7 +311,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Add
 // Multivector addition
@@ -321,7 +333,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Sub
 // Multivector subtraction
 
@@ -342,7 +353,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // smul
 // scalar/multivector multiplication
@@ -365,7 +375,6 @@ define_binary_op_all!(
     };
 );
 
-
 // muls
 // multivector/scalar multiplication
 
@@ -386,7 +395,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // sadd
 // scalar/multivector addition
@@ -409,7 +417,6 @@ define_binary_op_all!(
     };
 );
 
-
 // adds
 // multivector/scalar addition
 
@@ -431,31 +438,24 @@ define_binary_op_all!(
     };
 );
 
-
 impl QUAT {
-    pub fn norm(self: & Self) -> float_t {
+    pub fn norm(self: &Self) -> float_t {
         let scalar_part = (self * self.Conjugate())[0];
 
         scalar_part.abs().sqrt()
     }
 
-    pub fn inorm(self: & Self) -> float_t {
+    pub fn inorm(self: &Self) -> float_t {
         self.Dual().norm()
     }
 
-    pub fn normalized(self: & Self) -> Self {
+    pub fn normalized(self: &Self) -> Self {
         self * (1.0 / self.norm())
     }
-    
-    
-
 }
 
-
 fn main() {
-
-  println!("e1*e1         : {}", QUAT::e1() * QUAT::e1());
-  println!("pss           : {}", QUAT::e12());
-  println!("pss*pss       : {}", QUAT::e12() * QUAT::e12());
-
+    println!("e1*e1         : {}", QUAT::e1() * QUAT::e1());
+    println!("pss           : {}", QUAT::e12());
+    println!("pss*pss       : {}", QUAT::e12() * QUAT::e12());
 }

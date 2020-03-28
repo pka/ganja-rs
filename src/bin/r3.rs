@@ -8,25 +8,25 @@
 // #![feature(const_slice_len)]
 
 use std::fmt;
-use std::ops::{Index,IndexMut,Add,Sub,Mul,BitAnd,BitOr,BitXor,Not};
+use std::ops::{Add, BitAnd, BitOr, BitXor, Index, IndexMut, Mul, Not, Sub};
 
 type float_t = f64;
 
 // use std::f64::consts::PI;
 const PI: float_t = 3.14159265358979323846;
 
-const basis: &'static [&'static str] = &[ "1","e1","e2","e3","e12","e13","e23","e123" ];
+const basis: &'static [&'static str] = &["1", "e1", "e2", "e3", "e12", "e13", "e23", "e123"];
 const basis_count: usize = basis.len();
 
-#[derive(Default,Debug,Clone,PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 struct R3 {
-    mvec: Vec<float_t>
+    mvec: Vec<float_t>,
 }
 
 impl R3 {
     pub fn zero() -> Self {
         Self {
-            mvec: vec![0.0; basis_count]
+            mvec: vec![0.0; basis_count],
         }
     }
 
@@ -37,13 +37,27 @@ impl R3 {
     }
 
     // basis vectors are available as methods
-    pub fn e1() -> Self { R3::new(1.0, 1) }
-    pub fn e2() -> Self { R3::new(1.0, 2) }
-    pub fn e3() -> Self { R3::new(1.0, 3) }
-    pub fn e12() -> Self { R3::new(1.0, 4) }
-    pub fn e13() -> Self { R3::new(1.0, 5) }
-    pub fn e23() -> Self { R3::new(1.0, 6) }
-    pub fn e123() -> Self { R3::new(1.0, 7) }
+    pub fn e1() -> Self {
+        R3::new(1.0, 1)
+    }
+    pub fn e2() -> Self {
+        R3::new(1.0, 2)
+    }
+    pub fn e3() -> Self {
+        R3::new(1.0, 3)
+    }
+    pub fn e12() -> Self {
+        R3::new(1.0, 4)
+    }
+    pub fn e13() -> Self {
+        R3::new(1.0, 5)
+    }
+    pub fn e23() -> Self {
+        R3::new(1.0, 6)
+    }
+    pub fn e123() -> Self {
+        R3::new(1.0, 7)
+    }
 }
 
 impl Index<usize> for R3 {
@@ -63,19 +77,31 @@ impl IndexMut<usize> for R3 {
 impl fmt::Display for R3 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut n = 0;
-        let ret = self.mvec.iter().enumerate().filter_map(|(i, &coeff)| {
-            if coeff > 0.00001 || coeff < -0.00001 {
-                n = 1;
-                Some(format!("{}{}", 
-                        format!("{:.*}", 7, coeff).trim_end_matches('0').trim_end_matches('.'),
+        let ret = self
+            .mvec
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &coeff)| {
+                if coeff > 0.00001 || coeff < -0.00001 {
+                    n = 1;
+                    Some(format!(
+                        "{}{}",
+                        format!("{:.*}", 7, coeff)
+                            .trim_end_matches('0')
+                            .trim_end_matches('.'),
                         if i > 0 { basis[i] } else { "" }
-                    )
-                )
-            } else {
-                None
-            }
-        }).collect::<Vec<String>>().join(" + ");
-        if n==0 { write!(f,"0") } else { write!(f, "{}", ret) }
+                    ))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(" + ");
+        if n == 0 {
+            write!(f, "0")
+        } else {
+            write!(f, "{}", ret)
+        }
     }
 }
 
@@ -144,22 +170,20 @@ macro_rules! define_binary_op_all(
 
 // TODO define_unary_op
 
-
-
 // Reverse
 // Reverse the order of the basis blades.
 impl R3 {
-    pub fn Reverse(self: & Self) -> R3 {
+    pub fn Reverse(self: &Self) -> R3 {
         let mut res = R3::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=a[1];
-        res[2]=a[2];
-        res[3]=a[3];
-        res[4]=-a[4];
-        res[5]=-a[5];
-        res[6]=-a[6];
-        res[7]=-a[7];
+        res[0] = a[0];
+        res[1] = a[1];
+        res[2] = a[2];
+        res[3] = a[3];
+        res[4] = -a[4];
+        res[5] = -a[5];
+        res[6] = -a[6];
+        res[7] = -a[7];
         res
     }
 }
@@ -167,35 +191,35 @@ impl R3 {
 // Dual
 // Poincare duality operator.
 impl R3 {
-    pub fn Dual(self: & Self) -> R3 {
+    pub fn Dual(self: &Self) -> R3 {
         let mut res = R3::zero();
         let a = self;
-        res[0]=-a[7];
-        res[1]=-a[6];
-        res[2]=a[5];
-        res[3]=-a[4];
-        res[4]=a[3];
-        res[5]=-a[2];
-        res[6]=a[1];
-        res[7]=a[0];
+        res[0] = -a[7];
+        res[1] = -a[6];
+        res[2] = a[5];
+        res[3] = -a[4];
+        res[4] = a[3];
+        res[5] = -a[2];
+        res[6] = a[1];
+        res[7] = a[0];
         res
     }
 }
 
-impl Not for & R3 {
+impl Not for &R3 {
     type Output = R3;
 
     fn not(self: Self) -> R3 {
         let mut res = R3::zero();
         let a = self;
-        res[0]=-a[7];
-        res[1]=-a[6];
-        res[2]=a[5];
-        res[3]=-a[4];
-        res[4]=a[3];
-        res[5]=-a[2];
-        res[6]=a[1];
-        res[7]=a[0];
+        res[0] = -a[7];
+        res[1] = -a[6];
+        res[2] = a[5];
+        res[3] = -a[4];
+        res[4] = a[3];
+        res[5] = -a[2];
+        res[6] = a[1];
+        res[7] = a[0];
         res
     }
 }
@@ -203,17 +227,17 @@ impl Not for & R3 {
 // Conjugate
 // Clifford Conjugation
 impl R3 {
-    pub fn Conjugate(self: & Self) -> R3 {
+    pub fn Conjugate(self: &Self) -> R3 {
         let mut res = R3::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
-        res[4]=-a[4];
-        res[5]=-a[5];
-        res[6]=-a[6];
-        res[7]=a[7];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
+        res[4] = -a[4];
+        res[5] = -a[5];
+        res[6] = -a[6];
+        res[7] = a[7];
         res
     }
 }
@@ -221,17 +245,17 @@ impl R3 {
 // Involute
 // Main involution
 impl R3 {
-    pub fn Involute(self: & Self) -> R3 {
+    pub fn Involute(self: &Self) -> R3 {
         let mut res = R3::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
-        res[4]=a[4];
-        res[5]=a[5];
-        res[6]=a[6];
-        res[7]=-a[7];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
+        res[4] = a[4];
+        res[5] = a[5];
+        res[6] = a[6];
+        res[7] = -a[7];
         res
     }
 }
@@ -261,7 +285,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Wedge
 // The outer product. (MEET)
 
@@ -286,7 +309,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Vee
 // The regressive product. (JOIN)
@@ -313,7 +335,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Dot
 // The inner product.
 
@@ -338,7 +359,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Add
 // Multivector addition
@@ -365,7 +385,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Sub
 // Multivector subtraction
 
@@ -390,7 +409,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // smul
 // scalar/multivector multiplication
@@ -417,7 +435,6 @@ define_binary_op_all!(
     };
 );
 
-
 // muls
 // multivector/scalar multiplication
 
@@ -442,7 +459,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // sadd
 // scalar/multivector addition
@@ -469,7 +485,6 @@ define_binary_op_all!(
     };
 );
 
-
 // adds
 // multivector/scalar addition
 
@@ -495,31 +510,24 @@ define_binary_op_all!(
     };
 );
 
-
 impl R3 {
-    pub fn norm(self: & Self) -> float_t {
+    pub fn norm(self: &Self) -> float_t {
         let scalar_part = (self * self.Conjugate())[0];
 
         scalar_part.abs().sqrt()
     }
 
-    pub fn inorm(self: & Self) -> float_t {
+    pub fn inorm(self: &Self) -> float_t {
         self.Dual().norm()
     }
 
-    pub fn normalized(self: & Self) -> Self {
+    pub fn normalized(self: &Self) -> Self {
         self * (1.0 / self.norm())
     }
-    
-    
-
 }
 
-
 fn main() {
-
-  println!("e1*e1         : {}", R3::e1() * R3::e1());
-  println!("pss           : {}", R3::e123());
-  println!("pss*pss       : {}", R3::e123() * R3::e123());
-
+    println!("e1*e1         : {}", R3::e1() * R3::e1());
+    println!("pss           : {}", R3::e123());
+    println!("pss*pss       : {}", R3::e123() * R3::e123());
 }

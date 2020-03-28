@@ -8,25 +8,28 @@
 // #![feature(const_slice_len)]
 
 use std::fmt;
-use std::ops::{Index,IndexMut,Add,Sub,Mul,BitAnd,BitOr,BitXor,Not};
+use std::ops::{Add, BitAnd, BitOr, BitXor, Index, IndexMut, Mul, Not, Sub};
 
 type float_t = f64;
 
 // use std::f64::consts::PI;
 const PI: float_t = 3.14159265358979323846;
 
-const basis: &'static [&'static str] = &[ "1","e1","e2","e3","e4","e12","e13","e14","e23","e24","e34","e123","e124","e134","e234","e1234" ];
+const basis: &'static [&'static str] = &[
+    "1", "e1", "e2", "e3", "e4", "e12", "e13", "e14", "e23", "e24", "e34", "e123", "e124", "e134",
+    "e234", "e1234",
+];
 const basis_count: usize = basis.len();
 
-#[derive(Default,Debug,Clone,PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 struct SPACETIME {
-    mvec: Vec<float_t>
+    mvec: Vec<float_t>,
 }
 
 impl SPACETIME {
     pub fn zero() -> Self {
         Self {
-            mvec: vec![0.0; basis_count]
+            mvec: vec![0.0; basis_count],
         }
     }
 
@@ -37,21 +40,51 @@ impl SPACETIME {
     }
 
     // basis vectors are available as methods
-    pub fn e1() -> Self { SPACETIME::new(1.0, 1) }
-    pub fn e2() -> Self { SPACETIME::new(1.0, 2) }
-    pub fn e3() -> Self { SPACETIME::new(1.0, 3) }
-    pub fn e4() -> Self { SPACETIME::new(1.0, 4) }
-    pub fn e12() -> Self { SPACETIME::new(1.0, 5) }
-    pub fn e13() -> Self { SPACETIME::new(1.0, 6) }
-    pub fn e14() -> Self { SPACETIME::new(1.0, 7) }
-    pub fn e23() -> Self { SPACETIME::new(1.0, 8) }
-    pub fn e24() -> Self { SPACETIME::new(1.0, 9) }
-    pub fn e34() -> Self { SPACETIME::new(1.0, 10) }
-    pub fn e123() -> Self { SPACETIME::new(1.0, 11) }
-    pub fn e124() -> Self { SPACETIME::new(1.0, 12) }
-    pub fn e134() -> Self { SPACETIME::new(1.0, 13) }
-    pub fn e234() -> Self { SPACETIME::new(1.0, 14) }
-    pub fn e1234() -> Self { SPACETIME::new(1.0, 15) }
+    pub fn e1() -> Self {
+        SPACETIME::new(1.0, 1)
+    }
+    pub fn e2() -> Self {
+        SPACETIME::new(1.0, 2)
+    }
+    pub fn e3() -> Self {
+        SPACETIME::new(1.0, 3)
+    }
+    pub fn e4() -> Self {
+        SPACETIME::new(1.0, 4)
+    }
+    pub fn e12() -> Self {
+        SPACETIME::new(1.0, 5)
+    }
+    pub fn e13() -> Self {
+        SPACETIME::new(1.0, 6)
+    }
+    pub fn e14() -> Self {
+        SPACETIME::new(1.0, 7)
+    }
+    pub fn e23() -> Self {
+        SPACETIME::new(1.0, 8)
+    }
+    pub fn e24() -> Self {
+        SPACETIME::new(1.0, 9)
+    }
+    pub fn e34() -> Self {
+        SPACETIME::new(1.0, 10)
+    }
+    pub fn e123() -> Self {
+        SPACETIME::new(1.0, 11)
+    }
+    pub fn e124() -> Self {
+        SPACETIME::new(1.0, 12)
+    }
+    pub fn e134() -> Self {
+        SPACETIME::new(1.0, 13)
+    }
+    pub fn e234() -> Self {
+        SPACETIME::new(1.0, 14)
+    }
+    pub fn e1234() -> Self {
+        SPACETIME::new(1.0, 15)
+    }
 }
 
 impl Index<usize> for SPACETIME {
@@ -71,19 +104,31 @@ impl IndexMut<usize> for SPACETIME {
 impl fmt::Display for SPACETIME {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut n = 0;
-        let ret = self.mvec.iter().enumerate().filter_map(|(i, &coeff)| {
-            if coeff > 0.00001 || coeff < -0.00001 {
-                n = 1;
-                Some(format!("{}{}", 
-                        format!("{:.*}", 7, coeff).trim_end_matches('0').trim_end_matches('.'),
+        let ret = self
+            .mvec
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &coeff)| {
+                if coeff > 0.00001 || coeff < -0.00001 {
+                    n = 1;
+                    Some(format!(
+                        "{}{}",
+                        format!("{:.*}", 7, coeff)
+                            .trim_end_matches('0')
+                            .trim_end_matches('.'),
                         if i > 0 { basis[i] } else { "" }
-                    )
-                )
-            } else {
-                None
-            }
-        }).collect::<Vec<String>>().join(" + ");
-        if n==0 { write!(f,"0") } else { write!(f, "{}", ret) }
+                    ))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(" + ");
+        if n == 0 {
+            write!(f, "0")
+        } else {
+            write!(f, "{}", ret)
+        }
     }
 }
 
@@ -152,30 +197,28 @@ macro_rules! define_binary_op_all(
 
 // TODO define_unary_op
 
-
-
 // Reverse
 // Reverse the order of the basis blades.
 impl SPACETIME {
-    pub fn Reverse(self: & Self) -> SPACETIME {
+    pub fn Reverse(self: &Self) -> SPACETIME {
         let mut res = SPACETIME::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=a[1];
-        res[2]=a[2];
-        res[3]=a[3];
-        res[4]=a[4];
-        res[5]=-a[5];
-        res[6]=-a[6];
-        res[7]=-a[7];
-        res[8]=-a[8];
-        res[9]=-a[9];
-        res[10]=-a[10];
-        res[11]=-a[11];
-        res[12]=-a[12];
-        res[13]=-a[13];
-        res[14]=-a[14];
-        res[15]=a[15];
+        res[0] = a[0];
+        res[1] = a[1];
+        res[2] = a[2];
+        res[3] = a[3];
+        res[4] = a[4];
+        res[5] = -a[5];
+        res[6] = -a[6];
+        res[7] = -a[7];
+        res[8] = -a[8];
+        res[9] = -a[9];
+        res[10] = -a[10];
+        res[11] = -a[11];
+        res[12] = -a[12];
+        res[13] = -a[13];
+        res[14] = -a[14];
+        res[15] = a[15];
         res
     }
 }
@@ -183,51 +226,51 @@ impl SPACETIME {
 // Dual
 // Poincare duality operator.
 impl SPACETIME {
-    pub fn Dual(self: & Self) -> SPACETIME {
+    pub fn Dual(self: &Self) -> SPACETIME {
         let mut res = SPACETIME::zero();
         let a = self;
-        res[0]=-a[15];
-        res[1]=a[14];
-        res[2]=-a[13];
-        res[3]=a[12];
-        res[4]=a[11];
-        res[5]=a[10];
-        res[6]=-a[9];
-        res[7]=-a[8];
-        res[8]=a[7];
-        res[9]=a[6];
-        res[10]=-a[5];
-        res[11]=-a[4];
-        res[12]=-a[3];
-        res[13]=a[2];
-        res[14]=-a[1];
-        res[15]=a[0];
+        res[0] = -a[15];
+        res[1] = a[14];
+        res[2] = -a[13];
+        res[3] = a[12];
+        res[4] = a[11];
+        res[5] = a[10];
+        res[6] = -a[9];
+        res[7] = -a[8];
+        res[8] = a[7];
+        res[9] = a[6];
+        res[10] = -a[5];
+        res[11] = -a[4];
+        res[12] = -a[3];
+        res[13] = a[2];
+        res[14] = -a[1];
+        res[15] = a[0];
         res
     }
 }
 
-impl Not for & SPACETIME {
+impl Not for &SPACETIME {
     type Output = SPACETIME;
 
     fn not(self: Self) -> SPACETIME {
         let mut res = SPACETIME::zero();
         let a = self;
-        res[0]=-a[15];
-        res[1]=a[14];
-        res[2]=-a[13];
-        res[3]=a[12];
-        res[4]=a[11];
-        res[5]=a[10];
-        res[6]=-a[9];
-        res[7]=-a[8];
-        res[8]=a[7];
-        res[9]=a[6];
-        res[10]=-a[5];
-        res[11]=-a[4];
-        res[12]=-a[3];
-        res[13]=a[2];
-        res[14]=-a[1];
-        res[15]=a[0];
+        res[0] = -a[15];
+        res[1] = a[14];
+        res[2] = -a[13];
+        res[3] = a[12];
+        res[4] = a[11];
+        res[5] = a[10];
+        res[6] = -a[9];
+        res[7] = -a[8];
+        res[8] = a[7];
+        res[9] = a[6];
+        res[10] = -a[5];
+        res[11] = -a[4];
+        res[12] = -a[3];
+        res[13] = a[2];
+        res[14] = -a[1];
+        res[15] = a[0];
         res
     }
 }
@@ -235,25 +278,25 @@ impl Not for & SPACETIME {
 // Conjugate
 // Clifford Conjugation
 impl SPACETIME {
-    pub fn Conjugate(self: & Self) -> SPACETIME {
+    pub fn Conjugate(self: &Self) -> SPACETIME {
         let mut res = SPACETIME::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
-        res[4]=-a[4];
-        res[5]=-a[5];
-        res[6]=-a[6];
-        res[7]=-a[7];
-        res[8]=-a[8];
-        res[9]=-a[9];
-        res[10]=-a[10];
-        res[11]=a[11];
-        res[12]=a[12];
-        res[13]=a[13];
-        res[14]=a[14];
-        res[15]=a[15];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
+        res[4] = -a[4];
+        res[5] = -a[5];
+        res[6] = -a[6];
+        res[7] = -a[7];
+        res[8] = -a[8];
+        res[9] = -a[9];
+        res[10] = -a[10];
+        res[11] = a[11];
+        res[12] = a[12];
+        res[13] = a[13];
+        res[14] = a[14];
+        res[15] = a[15];
         res
     }
 }
@@ -261,25 +304,25 @@ impl SPACETIME {
 // Involute
 // Main involution
 impl SPACETIME {
-    pub fn Involute(self: & Self) -> SPACETIME {
+    pub fn Involute(self: &Self) -> SPACETIME {
         let mut res = SPACETIME::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
-        res[4]=-a[4];
-        res[5]=a[5];
-        res[6]=a[6];
-        res[7]=a[7];
-        res[8]=a[8];
-        res[9]=a[9];
-        res[10]=a[10];
-        res[11]=-a[11];
-        res[12]=-a[12];
-        res[13]=-a[13];
-        res[14]=-a[14];
-        res[15]=a[15];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
+        res[4] = -a[4];
+        res[5] = a[5];
+        res[6] = a[6];
+        res[7] = a[7];
+        res[8] = a[8];
+        res[9] = a[9];
+        res[10] = a[10];
+        res[11] = -a[11];
+        res[12] = -a[12];
+        res[13] = -a[13];
+        res[14] = -a[14];
+        res[15] = a[15];
         res
     }
 }
@@ -317,7 +360,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Wedge
 // The outer product. (MEET)
 
@@ -350,7 +392,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Vee
 // The regressive product. (JOIN)
@@ -385,7 +426,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Dot
 // The inner product.
 
@@ -418,7 +458,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Add
 // Multivector addition
@@ -453,7 +492,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Sub
 // Multivector subtraction
 
@@ -486,7 +524,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // smul
 // scalar/multivector multiplication
@@ -521,7 +558,6 @@ define_binary_op_all!(
     };
 );
 
-
 // muls
 // multivector/scalar multiplication
 
@@ -554,7 +590,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // sadd
 // scalar/multivector addition
@@ -589,7 +624,6 @@ define_binary_op_all!(
     };
 );
 
-
 // adds
 // multivector/scalar addition
 
@@ -623,31 +657,27 @@ define_binary_op_all!(
     };
 );
 
-
 impl SPACETIME {
-    pub fn norm(self: & Self) -> float_t {
+    pub fn norm(self: &Self) -> float_t {
         let scalar_part = (self * self.Conjugate())[0];
 
         scalar_part.abs().sqrt()
     }
 
-    pub fn inorm(self: & Self) -> float_t {
+    pub fn inorm(self: &Self) -> float_t {
         self.Dual().norm()
     }
 
-    pub fn normalized(self: & Self) -> Self {
+    pub fn normalized(self: &Self) -> Self {
         self * (1.0 / self.norm())
     }
-    
-    
-
 }
 
-
 fn main() {
-
-  println!("e1*e1         : {}", SPACETIME::e1() * SPACETIME::e1());
-  println!("pss           : {}", SPACETIME::e1234());
-  println!("pss*pss       : {}", SPACETIME::e1234() * SPACETIME::e1234());
-
+    println!("e1*e1         : {}", SPACETIME::e1() * SPACETIME::e1());
+    println!("pss           : {}", SPACETIME::e1234());
+    println!(
+        "pss*pss       : {}",
+        SPACETIME::e1234() * SPACETIME::e1234()
+    );
 }

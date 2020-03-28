@@ -8,25 +8,25 @@
 // #![feature(const_slice_len)]
 
 use std::fmt;
-use std::ops::{Index,IndexMut,Add,Sub,Mul,BitAnd,BitOr,BitXor,Not};
+use std::ops::{Add, BitAnd, BitOr, BitXor, Index, IndexMut, Mul, Not, Sub};
 
 type float_t = f64;
 
 // use std::f64::consts::PI;
 const PI: float_t = 3.14159265358979323846;
 
-const basis: &'static [&'static str] = &[ "1","e1" ];
+const basis: &'static [&'static str] = &["1", "e1"];
 const basis_count: usize = basis.len();
 
-#[derive(Default,Debug,Clone,PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 struct C {
-    mvec: Vec<float_t>
+    mvec: Vec<float_t>,
 }
 
 impl C {
     pub fn zero() -> Self {
         Self {
-            mvec: vec![0.0; basis_count]
+            mvec: vec![0.0; basis_count],
         }
     }
 
@@ -37,7 +37,9 @@ impl C {
     }
 
     // basis vectors are available as methods
-    pub fn e1() -> Self { C::new(1.0, 1) }
+    pub fn e1() -> Self {
+        C::new(1.0, 1)
+    }
 }
 
 impl Index<usize> for C {
@@ -57,19 +59,31 @@ impl IndexMut<usize> for C {
 impl fmt::Display for C {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut n = 0;
-        let ret = self.mvec.iter().enumerate().filter_map(|(i, &coeff)| {
-            if coeff > 0.00001 || coeff < -0.00001 {
-                n = 1;
-                Some(format!("{}{}", 
-                        format!("{:.*}", 7, coeff).trim_end_matches('0').trim_end_matches('.'),
+        let ret = self
+            .mvec
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &coeff)| {
+                if coeff > 0.00001 || coeff < -0.00001 {
+                    n = 1;
+                    Some(format!(
+                        "{}{}",
+                        format!("{:.*}", 7, coeff)
+                            .trim_end_matches('0')
+                            .trim_end_matches('.'),
                         if i > 0 { basis[i] } else { "" }
-                    )
-                )
-            } else {
-                None
-            }
-        }).collect::<Vec<String>>().join(" + ");
-        if n==0 { write!(f,"0") } else { write!(f, "{}", ret) }
+                    ))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(" + ");
+        if n == 0 {
+            write!(f, "0")
+        } else {
+            write!(f, "{}", ret)
+        }
     }
 }
 
@@ -138,16 +152,14 @@ macro_rules! define_binary_op_all(
 
 // TODO define_unary_op
 
-
-
 // Reverse
 // Reverse the order of the basis blades.
 impl C {
-    pub fn Reverse(self: & Self) -> C {
+    pub fn Reverse(self: &Self) -> C {
         let mut res = C::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=a[1];
+        res[0] = a[0];
+        res[1] = a[1];
         res
     }
 }
@@ -155,23 +167,23 @@ impl C {
 // Dual
 // Poincare duality operator.
 impl C {
-    pub fn Dual(self: & Self) -> C {
+    pub fn Dual(self: &Self) -> C {
         let mut res = C::zero();
         let a = self;
-        res[0]=-a[1];
-        res[1]=a[0];
+        res[0] = -a[1];
+        res[1] = a[0];
         res
     }
 }
 
-impl Not for & C {
+impl Not for &C {
     type Output = C;
 
     fn not(self: Self) -> C {
         let mut res = C::zero();
         let a = self;
-        res[0]=-a[1];
-        res[1]=a[0];
+        res[0] = -a[1];
+        res[1] = a[0];
         res
     }
 }
@@ -179,11 +191,11 @@ impl Not for & C {
 // Conjugate
 // Clifford Conjugation
 impl C {
-    pub fn Conjugate(self: & Self) -> C {
+    pub fn Conjugate(self: &Self) -> C {
         let mut res = C::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
+        res[0] = a[0];
+        res[1] = -a[1];
         res
     }
 }
@@ -191,11 +203,11 @@ impl C {
 // Involute
 // Main involution
 impl C {
-    pub fn Involute(self: & Self) -> C {
+    pub fn Involute(self: &Self) -> C {
         let mut res = C::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
+        res[0] = a[0];
+        res[1] = -a[1];
         res
     }
 }
@@ -219,7 +231,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Wedge
 // The outer product. (MEET)
 
@@ -238,7 +249,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Vee
 // The regressive product. (JOIN)
@@ -259,7 +269,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Dot
 // The inner product.
 
@@ -278,7 +287,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // Add
 // Multivector addition
@@ -299,7 +307,6 @@ define_binary_op_all!(
     };
 );
 
-
 // Sub
 // Multivector subtraction
 
@@ -318,7 +325,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // smul
 // scalar/multivector multiplication
@@ -339,7 +345,6 @@ define_binary_op_all!(
     };
 );
 
-
 // muls
 // multivector/scalar multiplication
 
@@ -358,7 +363,6 @@ define_binary_op_all!(
         res
     };
 );
-
 
 // sadd
 // scalar/multivector addition
@@ -379,7 +383,6 @@ define_binary_op_all!(
     };
 );
 
-
 // adds
 // multivector/scalar addition
 
@@ -399,31 +402,24 @@ define_binary_op_all!(
     };
 );
 
-
 impl C {
-    pub fn norm(self: & Self) -> float_t {
+    pub fn norm(self: &Self) -> float_t {
         let scalar_part = (self * self.Conjugate())[0];
 
         scalar_part.abs().sqrt()
     }
 
-    pub fn inorm(self: & Self) -> float_t {
+    pub fn inorm(self: &Self) -> float_t {
         self.Dual().norm()
     }
 
-    pub fn normalized(self: & Self) -> Self {
+    pub fn normalized(self: &Self) -> Self {
         self * (1.0 / self.norm())
     }
-    
-    
-
 }
 
-
 fn main() {
-
-  println!("e1*e1         : {}", C::e1() * C::e1());
-  println!("pss           : {}", C::e1());
-  println!("pss*pss       : {}", C::e1() * C::e1());
-
+    println!("e1*e1         : {}", C::e1() * C::e1());
+    println!("pss           : {}", C::e1());
+    println!("pss*pss       : {}", C::e1() * C::e1());
 }
