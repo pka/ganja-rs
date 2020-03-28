@@ -1,4 +1,3 @@
-
 // Written by a generator written by enki.
 #![allow(unused_imports)]
 #![allow(dead_code)]
@@ -8,25 +7,25 @@
 #![feature(const_slice_len)]
 
 use std::fmt;
-use std::ops::{Index,IndexMut,Add,Sub,Mul,BitAnd,BitOr,BitXor,Not};
+use std::ops::{Add, BitAnd, BitOr, BitXor, Index, IndexMut, Mul, Not, Sub};
 
 type float_t = f64;
 
 // use std::f64::consts::PI;
 const PI: float_t = 3.14159265358979323846;
 
-const basis: &'static [&'static str] = &[ "1","e0","e1","e2","e01","e20","e12","e012" ];
+const basis: &'static [&'static str] = &["1", "e0", "e1", "e2", "e01", "e20", "e12", "e012"];
 const basis_count: usize = basis.len();
 
-#[derive(Default,Debug,Clone,Copy,PartialEq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
 struct PGA2D {
-    mvec: [float_t; basis_count]
+    mvec: [float_t; basis_count],
 }
 
 impl PGA2D {
     pub const fn zero() -> Self {
         Self {
-            mvec: [0.0; basis_count]
+            mvec: [0.0; basis_count],
         }
     }
 
@@ -63,19 +62,31 @@ impl IndexMut<usize> for PGA2D {
 impl fmt::Display for PGA2D {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut n = 0;
-        let ret = self.mvec.iter().enumerate().filter_map(|(i, &coeff)| {
-            if coeff > 0.00001 || coeff < -0.00001 {
-                n = 1;
-                Some(format!("{}{}", 
-                        format!("{:.*}", 7, coeff).trim_end_matches('0').trim_end_matches('.'),
+        let ret = self
+            .mvec
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &coeff)| {
+                if coeff > 0.00001 || coeff < -0.00001 {
+                    n = 1;
+                    Some(format!(
+                        "{}{}",
+                        format!("{:.*}", 7, coeff)
+                            .trim_end_matches('0')
+                            .trim_end_matches('.'),
                         if i > 0 { basis[i] } else { "" }
-                    )
-                )
-            } else {
-                None
-            }
-        }).collect::<Vec<String>>().join(" + ");
-        if n==0 { write!(f,"0") } else { write!(f, "{}", ret) }
+                    ))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(" + ");
+        if n == 0 {
+            write!(f, "0")
+        } else {
+            write!(f, "{}", ret)
+        }
     }
 }
 
@@ -85,14 +96,14 @@ impl PGA2D {
     pub fn Reverse(self: Self) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=a[1];
-        res[2]=a[2];
-        res[3]=a[3];
-        res[4]=-a[4];
-        res[5]=-a[5];
-        res[6]=-a[6];
-        res[7]=-a[7];
+        res[0] = a[0];
+        res[1] = a[1];
+        res[2] = a[2];
+        res[3] = a[3];
+        res[4] = -a[4];
+        res[5] = -a[5];
+        res[6] = -a[6];
+        res[7] = -a[7];
         res
     }
 }
@@ -103,14 +114,14 @@ impl PGA2D {
     pub fn Dual(self: Self) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=a[7];
-        res[1]=a[6];
-        res[2]=a[5];
-        res[3]=a[4];
-        res[4]=a[3];
-        res[5]=a[2];
-        res[6]=a[1];
-        res[7]=a[0];
+        res[0] = a[7];
+        res[1] = a[6];
+        res[2] = a[5];
+        res[3] = a[4];
+        res[4] = a[3];
+        res[5] = a[2];
+        res[6] = a[1];
+        res[7] = a[0];
         res
     }
 }
@@ -121,14 +132,14 @@ impl Not for PGA2D {
     fn not(self: Self) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=a[7];
-        res[1]=a[6];
-        res[2]=a[5];
-        res[3]=a[4];
-        res[4]=a[3];
-        res[5]=a[2];
-        res[6]=a[1];
-        res[7]=a[0];
+        res[0] = a[7];
+        res[1] = a[6];
+        res[2] = a[5];
+        res[3] = a[4];
+        res[4] = a[3];
+        res[5] = a[2];
+        res[6] = a[1];
+        res[7] = a[0];
         res
     }
 }
@@ -139,14 +150,14 @@ impl PGA2D {
     pub fn Conjugate(self: Self) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
-        res[4]=-a[4];
-        res[5]=-a[5];
-        res[6]=-a[6];
-        res[7]=a[7];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
+        res[4] = -a[4];
+        res[5] = -a[5];
+        res[6] = -a[6];
+        res[7] = a[7];
         res
     }
 }
@@ -157,14 +168,14 @@ impl PGA2D {
     pub fn Involute(self: Self) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=a[0];
-        res[1]=-a[1];
-        res[2]=-a[2];
-        res[3]=-a[3];
-        res[4]=a[4];
-        res[5]=a[5];
-        res[6]=a[6];
-        res[7]=-a[7];
+        res[0] = a[0];
+        res[1] = -a[1];
+        res[2] = -a[2];
+        res[3] = -a[3];
+        res[4] = a[4];
+        res[5] = a[5];
+        res[6] = a[6];
+        res[7] = -a[7];
         res
     }
 }
@@ -177,14 +188,29 @@ impl Mul for PGA2D {
     fn mul(self: PGA2D, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=b[0]*a[0]+b[2]*a[2]+b[3]*a[3]-b[6]*a[6];
-		res[1]=b[1]*a[0]+b[0]*a[1]-b[4]*a[2]+b[5]*a[3]+b[2]*a[4]-b[3]*a[5]-b[7]*a[6]-b[6]*a[7];
-		res[2]=b[2]*a[0]+b[0]*a[2]-b[6]*a[3]+b[3]*a[6];
-		res[3]=b[3]*a[0]+b[6]*a[2]+b[0]*a[3]-b[2]*a[6];
-		res[4]=b[4]*a[0]+b[2]*a[1]-b[1]*a[2]+b[7]*a[3]+b[0]*a[4]+b[6]*a[5]-b[5]*a[6]+b[3]*a[7];
-		res[5]=b[5]*a[0]-b[3]*a[1]+b[7]*a[2]+b[1]*a[3]-b[6]*a[4]+b[0]*a[5]+b[4]*a[6]+b[2]*a[7];
-		res[6]=b[6]*a[0]+b[3]*a[2]-b[2]*a[3]+b[0]*a[6];
-		res[7]=b[7]*a[0]+b[6]*a[1]+b[5]*a[2]+b[4]*a[3]+b[3]*a[4]+b[2]*a[5]+b[1]*a[6]+b[0]*a[7];
+        res[0] = b[0] * a[0] + b[2] * a[2] + b[3] * a[3] - b[6] * a[6];
+        res[1] = b[1] * a[0] + b[0] * a[1] - b[4] * a[2] + b[5] * a[3] + b[2] * a[4]
+            - b[3] * a[5]
+            - b[7] * a[6]
+            - b[6] * a[7];
+        res[2] = b[2] * a[0] + b[0] * a[2] - b[6] * a[3] + b[3] * a[6];
+        res[3] = b[3] * a[0] + b[6] * a[2] + b[0] * a[3] - b[2] * a[6];
+        res[4] = b[4] * a[0] + b[2] * a[1] - b[1] * a[2] + b[7] * a[3] + b[0] * a[4] + b[6] * a[5]
+            - b[5] * a[6]
+            + b[3] * a[7];
+        res[5] = b[5] * a[0] - b[3] * a[1] + b[7] * a[2] + b[1] * a[3] - b[6] * a[4]
+            + b[0] * a[5]
+            + b[4] * a[6]
+            + b[2] * a[7];
+        res[6] = b[6] * a[0] + b[3] * a[2] - b[2] * a[3] + b[0] * a[6];
+        res[7] = b[7] * a[0]
+            + b[6] * a[1]
+            + b[5] * a[2]
+            + b[4] * a[3]
+            + b[3] * a[4]
+            + b[2] * a[5]
+            + b[1] * a[6]
+            + b[0] * a[7];
         res
     }
 }
@@ -197,14 +223,21 @@ impl BitXor for PGA2D {
     fn bitxor(self: PGA2D, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=b[0]*a[0];
-		res[1]=b[1]*a[0]+b[0]*a[1];
-		res[2]=b[2]*a[0]+b[0]*a[2];
-		res[3]=b[3]*a[0]+b[0]*a[3];
-		res[4]=b[4]*a[0]+b[2]*a[1]-b[1]*a[2]+b[0]*a[4];
-		res[5]=b[5]*a[0]-b[3]*a[1]+b[1]*a[3]+b[0]*a[5];
-		res[6]=b[6]*a[0]+b[3]*a[2]-b[2]*a[3]+b[0]*a[6];
-		res[7]=b[7]*a[0]+b[6]*a[1]+b[5]*a[2]+b[4]*a[3]+b[3]*a[4]+b[2]*a[5]+b[1]*a[6]+b[0]*a[7];
+        res[0] = b[0] * a[0];
+        res[1] = b[1] * a[0] + b[0] * a[1];
+        res[2] = b[2] * a[0] + b[0] * a[2];
+        res[3] = b[3] * a[0] + b[0] * a[3];
+        res[4] = b[4] * a[0] + b[2] * a[1] - b[1] * a[2] + b[0] * a[4];
+        res[5] = b[5] * a[0] - b[3] * a[1] + b[1] * a[3] + b[0] * a[5];
+        res[6] = b[6] * a[0] + b[3] * a[2] - b[2] * a[3] + b[0] * a[6];
+        res[7] = b[7] * a[0]
+            + b[6] * a[1]
+            + b[5] * a[2]
+            + b[4] * a[3]
+            + b[3] * a[4]
+            + b[2] * a[5]
+            + b[1] * a[6]
+            + b[0] * a[7];
         res
     }
 }
@@ -217,14 +250,21 @@ impl BitAnd for PGA2D {
     fn bitand(self: PGA2D, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[7]=b[7]*a[7];
-		res[6]=b[6]*a[7]+b[7]*a[6];
-		res[5]=b[5]*a[7]+b[7]*a[5];
-		res[4]=b[4]*a[7]+b[7]*a[4];
-		res[3]=b[3]*a[7]+b[5]*a[6]-b[6]*a[5]+b[7]*a[3];
-		res[2]=b[2]*a[7]-b[4]*a[6]+b[6]*a[4]+b[7]*a[2];
-		res[1]=b[1]*a[7]+b[4]*a[5]-b[5]*a[4]+b[7]*a[1];
-		res[0]=b[0]*a[7]+b[1]*a[6]+b[2]*a[5]+b[3]*a[4]+b[4]*a[3]+b[5]*a[2]+b[6]*a[1]+b[7]*a[0];
+        res[7] = b[7] * a[7];
+        res[6] = b[6] * a[7] + b[7] * a[6];
+        res[5] = b[5] * a[7] + b[7] * a[5];
+        res[4] = b[4] * a[7] + b[7] * a[4];
+        res[3] = b[3] * a[7] + b[5] * a[6] - b[6] * a[5] + b[7] * a[3];
+        res[2] = b[2] * a[7] - b[4] * a[6] + b[6] * a[4] + b[7] * a[2];
+        res[1] = b[1] * a[7] + b[4] * a[5] - b[5] * a[4] + b[7] * a[1];
+        res[0] = b[0] * a[7]
+            + b[1] * a[6]
+            + b[2] * a[5]
+            + b[3] * a[4]
+            + b[4] * a[3]
+            + b[5] * a[2]
+            + b[6] * a[1]
+            + b[7] * a[0];
         res
     }
 }
@@ -237,14 +277,17 @@ impl BitOr for PGA2D {
     fn bitor(self: PGA2D, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0]=b[0]*a[0]+b[2]*a[2]+b[3]*a[3]-b[6]*a[6];
-		res[1]=b[1]*a[0]+b[0]*a[1]-b[4]*a[2]+b[5]*a[3]+b[2]*a[4]-b[3]*a[5]-b[7]*a[6]-b[6]*a[7];
-		res[2]=b[2]*a[0]+b[0]*a[2]-b[6]*a[3]+b[3]*a[6];
-		res[3]=b[3]*a[0]+b[6]*a[2]+b[0]*a[3]-b[2]*a[6];
-		res[4]=b[4]*a[0]+b[7]*a[3]+b[0]*a[4]+b[3]*a[7];
-		res[5]=b[5]*a[0]+b[7]*a[2]+b[0]*a[5]+b[2]*a[7];
-		res[6]=b[6]*a[0]+b[0]*a[6];
-		res[7]=b[7]*a[0]+b[0]*a[7];
+        res[0] = b[0] * a[0] + b[2] * a[2] + b[3] * a[3] - b[6] * a[6];
+        res[1] = b[1] * a[0] + b[0] * a[1] - b[4] * a[2] + b[5] * a[3] + b[2] * a[4]
+            - b[3] * a[5]
+            - b[7] * a[6]
+            - b[6] * a[7];
+        res[2] = b[2] * a[0] + b[0] * a[2] - b[6] * a[3] + b[3] * a[6];
+        res[3] = b[3] * a[0] + b[6] * a[2] + b[0] * a[3] - b[2] * a[6];
+        res[4] = b[4] * a[0] + b[7] * a[3] + b[0] * a[4] + b[3] * a[7];
+        res[5] = b[5] * a[0] + b[7] * a[2] + b[0] * a[5] + b[2] * a[7];
+        res[6] = b[6] * a[0] + b[0] * a[6];
+        res[7] = b[7] * a[0] + b[0] * a[7];
         res
     }
 }
@@ -257,14 +300,14 @@ impl Add for PGA2D {
     fn add(self: PGA2D, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0] = a[0]+b[0];
-		res[1] = a[1]+b[1];
-		res[2] = a[2]+b[2];
-		res[3] = a[3]+b[3];
-		res[4] = a[4]+b[4];
-		res[5] = a[5]+b[5];
-		res[6] = a[6]+b[6];
-		res[7] = a[7]+b[7];
+        res[0] = a[0] + b[0];
+        res[1] = a[1] + b[1];
+        res[2] = a[2] + b[2];
+        res[3] = a[3] + b[3];
+        res[4] = a[4] + b[4];
+        res[5] = a[5] + b[5];
+        res[6] = a[6] + b[6];
+        res[7] = a[7] + b[7];
         res
     }
 }
@@ -277,14 +320,14 @@ impl Sub for PGA2D {
     fn sub(self: PGA2D, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0] = a[0]-b[0];
-		res[1] = a[1]-b[1];
-		res[2] = a[2]-b[2];
-		res[3] = a[3]-b[3];
-		res[4] = a[4]-b[4];
-		res[5] = a[5]-b[5];
-		res[6] = a[6]-b[6];
-		res[7] = a[7]-b[7];
+        res[0] = a[0] - b[0];
+        res[1] = a[1] - b[1];
+        res[2] = a[2] - b[2];
+        res[3] = a[3] - b[3];
+        res[4] = a[4] - b[4];
+        res[5] = a[5] - b[5];
+        res[6] = a[6] - b[6];
+        res[7] = a[7] - b[7];
         res
     }
 }
@@ -297,14 +340,14 @@ impl Mul<PGA2D> for float_t {
     fn mul(self: float_t, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0] = a*b[0];
-        res[1] = a*b[1];
-        res[2] = a*b[2];
-        res[3] = a*b[3];
-        res[4] = a*b[4];
-        res[5] = a*b[5];
-        res[6] = a*b[6];
-        res[7] = a*b[7];
+        res[0] = a * b[0];
+        res[1] = a * b[1];
+        res[2] = a * b[2];
+        res[3] = a * b[3];
+        res[4] = a * b[4];
+        res[5] = a * b[5];
+        res[6] = a * b[6];
+        res[7] = a * b[7];
         res
     }
 }
@@ -317,17 +360,17 @@ impl Mul<float_t> for PGA2D {
     fn mul(self: PGA2D, b: float_t) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0] = a[0]*b;
-        res[1] = a[1]*b;
-        res[2] = a[2]*b;
-        res[3] = a[3]*b;
-        res[4] = a[4]*b;
-        res[5] = a[5]*b;
-        res[6] = a[6]*b;
-        res[7] = a[7]*b;
+        res[0] = a[0] * b;
+        res[1] = a[1] * b;
+        res[2] = a[2] * b;
+        res[3] = a[3] * b;
+        res[4] = a[4] * b;
+        res[5] = a[5] * b;
+        res[6] = a[6] * b;
+        res[7] = a[7] * b;
         res
     }
-    }
+}
 
 // sadd
 // scalar/multivector addition
@@ -337,7 +380,7 @@ impl Add<PGA2D> for float_t {
     fn add(self: float_t, b: PGA2D) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0] = a+b[0];
+        res[0] = a + b[0];
         res[1] = b[1];
         res[2] = b[2];
         res[3] = b[3];
@@ -357,7 +400,7 @@ impl Add<float_t> for PGA2D {
     fn add(self: PGA2D, b: float_t) -> PGA2D {
         let mut res = PGA2D::zero();
         let a = self;
-        res[0] = a[0]+b;
+        res[0] = a[0] + b;
         res[1] = a[1];
         res[2] = a[2];
         res[3] = a[3];
@@ -367,7 +410,7 @@ impl Add<float_t> for PGA2D {
         res[7] = a[7];
         res
     }
-    }
+}
 
 impl PGA2D {
     pub fn norm(self: Self) -> float_t {
@@ -383,16 +426,10 @@ impl PGA2D {
     pub fn normalized(self: Self) -> Self {
         self * (1.0 / self.norm())
     }
-    
-    
-
 }
 
-
 fn main() {
-
-  println!("e0*e0         : {}", e0 * e0);
-  println!("pss           : {}", e012);
-  println!("pss*pss       : {}", e012*e012);
-
+    println!("e0*e0         : {}", e0 * e0);
+    println!("pss           : {}", e012);
+    println!("pss*pss       : {}", e012 * e012);
 }
