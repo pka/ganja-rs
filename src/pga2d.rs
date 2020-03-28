@@ -1,10 +1,8 @@
 // Written by a generator written by enki.
-#![allow(unused_imports)]
 #![allow(dead_code)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
-#![feature(const_slice_len)]
 
 use std::fmt;
 use std::ops::{Add, BitAnd, BitOr, BitXor, Index, IndexMut, Mul, Not, Sub};
@@ -18,7 +16,7 @@ const basis: &'static [&'static str] = &["1", "e0", "e1", "e2", "e01", "e20", "e
 const basis_count: usize = basis.len();
 
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
-struct PGA2D {
+pub struct PGA2D {
     mvec: [float_t; basis_count],
 }
 
@@ -37,13 +35,13 @@ impl PGA2D {
 }
 
 // basis vectors are available as global constants.
-const e0: PGA2D = PGA2D::new(1.0, 1);
-const e1: PGA2D = PGA2D::new(1.0, 2);
-const e2: PGA2D = PGA2D::new(1.0, 3);
-const e01: PGA2D = PGA2D::new(1.0, 4);
-const e20: PGA2D = PGA2D::new(1.0, 5);
-const e12: PGA2D = PGA2D::new(1.0, 6);
-const e012: PGA2D = PGA2D::new(1.0, 7);
+pub const e0: PGA2D = PGA2D::new(1.0, 1);
+pub const e1: PGA2D = PGA2D::new(1.0, 2);
+pub const e2: PGA2D = PGA2D::new(1.0, 3);
+pub const e01: PGA2D = PGA2D::new(1.0, 4);
+pub const e20: PGA2D = PGA2D::new(1.0, 5);
+pub const e12: PGA2D = PGA2D::new(1.0, 6);
+pub const e012: PGA2D = PGA2D::new(1.0, 7);
 
 impl Index<usize> for PGA2D {
     type Output = float_t;
@@ -426,10 +424,4 @@ impl PGA2D {
     pub fn normalized(self: Self) -> Self {
         self * (1.0 / self.norm())
     }
-}
-
-fn main() {
-    println!("e0*e0         : {}", e0 * e0);
-    println!("pss           : {}", e012);
-    println!("pss*pss       : {}", e012 * e012);
 }
