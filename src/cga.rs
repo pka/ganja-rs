@@ -968,6 +968,15 @@ impl CGA {
         (Self::e5() - Self::e4()) * 0.5
     }
 
+    // from C++
+
+    pub fn no() -> Self {
+        0.5 * (Self::e5() - Self::e4())
+    }
+    pub fn ni() -> Self {
+        Self::e4() + Self::e5()
+    }
+
     pub fn up(x: float_t, y: float_t, z: float_t) -> Self {
         x * Self::e1()
             + y * Self::e2()
