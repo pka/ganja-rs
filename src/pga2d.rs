@@ -17,7 +17,7 @@ const basis_count: usize = basis.len();
 
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct PGA2D {
-    mvec: [float_t; basis_count],
+    pub(crate) mvec: [float_t; basis_count],
 }
 
 impl PGA2D {
