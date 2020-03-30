@@ -968,21 +968,18 @@ impl CGA {
         (Self::e5() - Self::e4()) * 0.5
     }
 
-    // from C++
-
-    pub fn no() -> Self {
-        0.5 * (Self::e5() - Self::e4())
-    }
-    pub fn ni() -> Self {
-        Self::e4() + Self::e5()
-    }
-
     pub fn up(x: float_t, y: float_t, z: float_t) -> Self {
         x * Self::e1()
             + y * Self::e2()
             + z * Self::e3()
             + 0.5 * (x * x + y * y + z * z) * Self::ei()
             + Self::eo()
+    }
+}
+
+impl CGA {
+    pub fn to_vec(&self) -> Vec<float_t> {
+        self.mvec.to_vec()
     }
 }
 
