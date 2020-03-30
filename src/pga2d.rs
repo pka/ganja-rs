@@ -17,7 +17,7 @@ const basis_count: usize = basis.len();
 
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct PGA2D {
-    pub(crate) mvec: [float_t; basis_count],
+    mvec: [float_t; basis_count],
 }
 
 impl PGA2D {
@@ -423,5 +423,45 @@ impl PGA2D {
 
     pub fn normalized(self: Self) -> Self {
         self * (1.0 / self.norm())
+    }
+}
+
+#[test]
+fn basics() {
+    assert_eq!(e0 * e0, PGA2D::zero());
+    assert_eq!(e012.to_string(), "1e012"); // pss
+    assert_eq!(e012 * e012, PGA2D::zero()); // pss*pss
+}
+
+impl PGA2D {
+    pub fn e0(&self) -> float_t {
+        self.mvec[1]
+    }
+    pub fn e1(&self) -> float_t {
+        self.mvec[2]
+    }
+    pub fn e2(&self) -> float_t {
+        self.mvec[3]
+    }
+    pub fn e01(&self) -> float_t {
+        self.mvec[4]
+    }
+    pub fn e20(&self) -> float_t {
+        self.mvec[5]
+    }
+    pub fn e12(&self) -> float_t {
+        self.mvec[6]
+    }
+    pub fn e012(&self) -> float_t {
+        self.mvec[7]
+    }
+    pub fn point(x: float_t, y: float_t) -> Self {
+        Self {
+            mvec: [0.0, 0.0, 0.0, 0.0, y, -x, 1.0, 0.0],
+        }
+    }
+    /// sandwich product
+    pub fn sw(&self, b: Self) -> Self {
+        *self * b * self.Reverse()
     }
 }

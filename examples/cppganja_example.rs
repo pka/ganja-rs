@@ -1,7 +1,5 @@
-mod cga;
-mod ganja_graph;
-
-use crate::cga::*;
+use ganja_rs::cga::*;
+use ganja_rs::ganja_graph;
 use rand::Rng;
 
 // Example from https://github.com/pygae/cppganja

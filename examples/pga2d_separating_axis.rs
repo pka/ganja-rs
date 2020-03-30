@@ -1,48 +1,11 @@
-mod pga2d;
-
-use crate::pga2d::*;
+use ganja_rs::pga2d::*;
 use std::f64::consts::PI;
 
 // https://enkimute.github.io/ganja.js/examples/coffeeshop.html#pga2d_separating_axis
 
-impl PGA2D {
-    pub fn e0(&self) -> f64 {
-        self.mvec[1]
-    }
-    pub fn e1(&self) -> f64 {
-        self.mvec[2]
-    }
-    pub fn e2(&self) -> f64 {
-        self.mvec[3]
-    }
-    pub fn e01(&self) -> f64 {
-        self.mvec[4]
-    }
-    pub fn e20(&self) -> f64 {
-        self.mvec[5]
-    }
-    pub fn e12(&self) -> f64 {
-        self.mvec[6]
-    }
-    pub fn e012(&self) -> f64 {
-        self.mvec[7]
-    }
-
-    pub fn point(x: f64, y: f64) -> Self {
-        // JS: 1e12-x*1e02+y*1e01
-        Self {
-            // ["1", "e0", "e1", "e2", "e01", "e20", "e12", "e012"]
-            mvec: [0.0, 0.0, y, -x, 0.0, 0.0, 1.0, 0.0],
-        }
-    }
-    /// sandwich product
-    pub fn sw(&self, b: Self) -> Self {
-        *self * b * self.Reverse()
-    }
-}
-
+#[allow(dead_code)]
 fn dist_pl(p: PGA2D, l: PGA2D) -> f64 {
-    (p.normalized() ^ l.normalized()).e012() //e012
+    (p.normalized() ^ l.normalized()).e012()
 }
 
 pub fn rotor(point: PGA2D, angle: f64) -> PGA2D {
@@ -56,7 +19,7 @@ fn ngon(p: PGA2D, n: usize, d: f64, a: f64) -> Vec<PGA2D> {
         .collect::<Vec<_>>()
 }
 
-fn pga2d_separating_axis() {
+fn main() {
     // // in 2D, the seperating axis test involves testing overlap of the projection
     // // onto one of the possible seperating  axi. we support all regular ngons and
     // // demonstrate intersection testing.
