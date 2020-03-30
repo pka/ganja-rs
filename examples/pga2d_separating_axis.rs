@@ -1,10 +1,12 @@
+use ganja_rs::ganja_graph;
 use ganja_rs::pga2d::*;
 use std::f64::consts::PI;
+use std::fs::File;
+use std::io::BufWriter;
 
 // https://enkimute.github.io/ganja.js/examples/coffeeshop.html#pga2d_separating_axis
 
-#[allow(dead_code)]
-fn dist_pl(p: PGA2D, l: PGA2D) -> f64 {
+pub fn dist_pl(p: PGA2D, l: PGA2D) -> f64 {
     (p.normalized() ^ l.normalized()).e012()
 }
 
@@ -19,7 +21,7 @@ fn ngon(p: PGA2D, n: usize, d: f64, a: f64) -> Vec<PGA2D> {
         .collect::<Vec<_>>()
 }
 
-fn main() {
+fn main() -> std::result::Result<(), std::io::Error> {
     // // in 2D, the seperating axis test involves testing overlap of the projection
     // // onto one of the possible seperating  axi. we support all regular ngons and
     // // demonstrate intersection testing.
@@ -58,20 +60,19 @@ fn main() {
 
     let triangle = ngon(pa, 3, 0.65, pa[2] * 10.0);
     let hexagon = ngon(pb, 6, 0.5, 0.0);
-    println!(
-        "triangle: [{}]",
-        triangle
-            .iter()
-            .map(|p| format!("{}", p))
-            .collect::<Vec<_>>()
-            .join(", ")
-    );
-    println!(
-        "hexagon: [{}]",
-        hexagon
-            .iter()
-            .map(|p| format!("{}", p))
-            .collect::<Vec<_>>()
-            .join(", ")
-    );
+
+    let mut graph = ganja_graph::GanjaGraph {
+        p: 2,
+        q: 0,
+        r: 1,
+        gl: false,
+        ..Default::default()
+    };
+    graph.add_objects(triangle.iter().map(|e| e.to_vec()).collect(), 0xffaaaa);
+    graph.add_objects(hexagon.iter().map(|e| e.to_vec()).collect(), 0xffaaaa);
+
+    let fnout = "pga2d_separating_axis.html";
+    println!("Writing {}", fnout);
+    let mut fout = BufWriter::new(File::create(fnout)?);
+    graph.graph_html(&mut fout)
 }

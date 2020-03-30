@@ -455,6 +455,9 @@ impl PGA2D {
     pub fn e012(&self) -> float_t {
         self.mvec[7]
     }
+    pub fn to_vec(&self) -> Vec<float_t> {
+        self.mvec.to_vec()
+    }
     pub fn point(x: float_t, y: float_t) -> Self {
         Self {
             mvec: [0.0, 0.0, 0.0, 0.0, y, -x, 1.0, 0.0],

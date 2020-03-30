@@ -8,7 +8,7 @@ pub struct GanjaGraph<'a> {
     pub scale: f64,
     pub grid: bool,
     pub gl: bool,
-    pub values: Vec<Vec<f64>>,
+    pub values: Vec<Vec<Vec<f64>>>,
     pub colors: Vec<u64>,
 }
 
@@ -30,12 +30,13 @@ impl Default for GanjaGraph<'_> {
 
 impl GanjaGraph<'_> {
     pub fn add_object(&mut self, object_array: Vec<f64>, color: u64) {
-        self.values.push(object_array);
+        self.values.push(vec![object_array]);
         self.colors.push(color);
     }
 
-    fn mv_length(&self) -> usize {
-        self.values.first().unwrap().len()
+    pub fn add_objects(&mut self, object_array_array: Vec<Vec<f64>>, color: u64) {
+        self.values.push(object_array_array);
+        self.colors.push(color);
     }
 
     fn graph_json<W: Write>(&self, out: &mut W) -> std::result::Result<(), std::io::Error> {
@@ -46,15 +47,19 @@ impl GanjaGraph<'_> {
             }
             out.write(self.colors[i].to_string().as_bytes())?;
             out.write(b",")?;
-            out.write(format!("{:?}", v).as_bytes())?;
+            if v.len() > 1 {
+                out.write(b"[")?;
+            }
+            let elems = v
+                .iter()
+                .map(|arr| format!("new Element({:?})", arr))
+                .collect::<Vec<_>>();
+            out.write(elems.join(",").as_bytes())?;
+            if v.len() > 1 {
+                out.write(b"]")?;
+            }
         }
-        out.write(
-            format!(
-                "\n    ].map(x=>x.length=={}?new Element(x):x)",
-                self.mv_length()
-            )
-            .as_bytes(),
-        )?;
+        out.write(b"\n    ]")?;
         Ok(())
     }
 
@@ -71,7 +76,7 @@ impl GanjaGraph<'_> {
 <body style="position:absolute; top:0; bottom:0; right:0; left:0; overflow:hidden;">
   <script>
   Algebra({p},{q},{r},()=>{{
-  var canvas = this.graph(("#,
+  var canvas = this.graph("#,
             title = self.title,
             p = self.p,
             q = self.q,
@@ -82,7 +87,7 @@ impl GanjaGraph<'_> {
         self.graph_json(out)?;
 
         let html = format!(
-            r#").map(x=>x.length=={mv_length}?new Element(x):x),
+            r#",
     {{conformal:{conformal},gl:{gl},grid:{grid},scale:{scale},useUnnaturalLineDisplayForPointPairs:true}});
   canvas.style.width = '100vw';
   canvas.style.height = '100vh';
@@ -92,7 +97,6 @@ impl GanjaGraph<'_> {
 </body>
 </html>
 "#,
-            mv_length = self.mv_length(),
             conformal = (self.q != 0).to_string(),
             grid = self.grid.to_string(),
             scale = self.scale.to_string(),
