@@ -49,6 +49,7 @@ fn main() -> std::result::Result<(), std::io::Error> {
     let plane = random_plane(&mut rng, 2.0);
 
     let mut graph = ganja_graph::GanjaGraph {
+        title: "random",
         p: 4,
         q: 1,
         r: 0,

@@ -62,6 +62,7 @@ fn main() -> std::result::Result<(), std::io::Error> {
     let hexagon = ngon(pb, 6, 0.5, 0.0);
 
     let mut graph = ganja_graph::GanjaGraph {
+        title: "pga2d_separating_axis",
         p: 2,
         q: 0,
         r: 1,

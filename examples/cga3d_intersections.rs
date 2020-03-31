@@ -73,6 +73,7 @@ fn main() -> std::result::Result<(), std::io::Error> {
     //   ],{conformal:true,gl:true,grid:true}));
     // });
     let mut graph = ganja_graph::GanjaGraph {
+        title: "cga3d_intersections",
         p: 4,
         q: 1,
         r: 0,
