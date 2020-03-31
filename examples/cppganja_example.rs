@@ -43,10 +43,10 @@ fn main() -> std::result::Result<(), std::io::Error> {
     use std::io::BufWriter;
 
     let mut rng = thread_rng();
-    let point = random_point(&mut rng, 1.0);
-    let line = random_line(&mut rng, 1.0);
-    let circle = random_circle(&mut rng, 1.0);
-    let plane = random_plane(&mut rng, 1.0);
+    let point = random_point(&mut rng, 2.0);
+    let line = random_line(&mut rng, 2.0);
+    let circle = random_circle(&mut rng, 2.0);
+    let plane = random_plane(&mut rng, 2.0);
 
     let mut graph = ganja_graph::GanjaGraph {
         p: 4,
