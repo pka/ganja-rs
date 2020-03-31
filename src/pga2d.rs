@@ -468,3 +468,9 @@ impl PGA2D {
         *self * b * self.Reverse()
     }
 }
+
+impl From<PGA2D> for Vec<float_t> {
+    fn from(item: PGA2D) -> Self {
+        item.mvec.to_vec()
+    }
+}

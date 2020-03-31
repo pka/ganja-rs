@@ -977,11 +977,17 @@ impl CGA {
     }
 }
 
-impl CGA {
-    pub fn to_vec(&self) -> Vec<float_t> {
-        self.mvec.to_vec()
+impl From<CGA> for Vec<float_t> {
+    fn from(item: CGA) -> Self {
+        item.mvec.to_vec()
     }
 }
+
+// impl AsRef<Vec<float_t>> for CGA {
+//     fn as_ref(&self) -> &Vec<float_t> {
+//         &self.mvec
+//     }
+// }
 
 #[test]
 fn basics() {

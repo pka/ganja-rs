@@ -29,13 +29,14 @@ impl Default for GanjaGraph<'_> {
 }
 
 impl GanjaGraph<'_> {
-    pub fn add_object(&mut self, object_array: Vec<f64>, color: u64) {
-        self.values.push(vec![object_array]);
+    pub fn add_bivector<T: Into<Vec<f64>>>(&mut self, bivector: T, color: u64) {
+        self.values.push(vec![bivector.into()]);
         self.colors.push(color);
     }
 
-    pub fn add_objects(&mut self, object_array_array: Vec<Vec<f64>>, color: u64) {
-        self.values.push(object_array_array);
+    pub fn add_bivectors<T: Into<Vec<f64>>>(&mut self, bivectors: Vec<T>, color: u64) {
+        self.values
+            .push(bivectors.into_iter().map(|e| e.into()).collect());
         self.colors.push(color);
     }
 

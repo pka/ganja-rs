@@ -79,19 +79,19 @@ fn main() -> std::result::Result<(), std::io::Error> {
         r: 0,
         ..Default::default()
     };
-    graph.add_object(p.to_vec(), 0x00FF0000);
-    graph.add_object(lp.to_vec(), 0xFF00FF);
-    graph.add_object(C1.to_vec(), 0x0000FF);
-    graph.add_object(C2.to_vec(), 0x888800);
-    graph.add_object(C3.to_vec(), 0x0088FF);
-    graph.add_object(C4.to_vec(), 0x008800);
-    graph.add_object(C5.to_vec(), 0x880000);
-    graph.add_object(L.to_vec(), 0);
-    graph.add_object(C.to_vec(), 0);
-    graph.add_object(P.to_vec(), 0xE0008800);
-    graph.add_object(P2.to_vec(), 0xaa000000);
-    graph.add_object(S.to_vec(), 0xE0FFFFFF);
-    graph.add_object(S2.to_vec(), 0xaa000000);
+    graph.add_bivector(p, 0x00FF0000);
+    graph.add_bivector(lp, 0xFF00FF);
+    graph.add_bivector(C1, 0x0000FF);
+    graph.add_bivector(C2, 0x888800);
+    graph.add_bivector(C3, 0x0088FF);
+    graph.add_bivector(C4, 0x008800);
+    graph.add_bivector(C5, 0x880000);
+    graph.add_bivector(L, 0);
+    graph.add_bivector(C, 0);
+    graph.add_bivector(P, 0xE0008800);
+    graph.add_bivector(P2, 0xaa000000);
+    graph.add_bivector(S, 0xE0FFFFFF);
+    graph.add_bivector(S2, 0xaa000000);
 
     let fnout = "cga3d_intersections.html";
     println!("Writing {}", fnout);
