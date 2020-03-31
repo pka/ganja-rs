@@ -10,6 +10,7 @@ pub struct GanjaGraph<'a> {
     pub gl: bool,
     pub values: Vec<Vec<Vec<f64>>>,
     pub colors: Vec<u64>,
+    pub labels: Vec<Option<&'a str>>,
 }
 
 impl Default for GanjaGraph<'_> {
@@ -24,20 +25,33 @@ impl Default for GanjaGraph<'_> {
             gl: true,
             values: Vec::new(),
             colors: Vec::new(),
+            labels: Vec::new(),
         }
     }
 }
 
-impl GanjaGraph<'_> {
-    pub fn add_bivector<T: Into<Vec<f64>>>(&mut self, bivector: T, color: u64) {
+impl<'a> GanjaGraph<'a> {
+    pub fn add_bivector<T: Into<Vec<f64>>>(
+        &mut self,
+        bivector: T,
+        color: u64,
+        label: Option<&'a str>,
+    ) {
         self.values.push(vec![bivector.into()]);
         self.colors.push(color);
+        self.labels.push(label);
     }
 
-    pub fn add_bivectors<T: Into<Vec<f64>>>(&mut self, bivectors: Vec<T>, color: u64) {
+    pub fn add_bivectors<T: Into<Vec<f64>>>(
+        &mut self,
+        bivectors: Vec<T>,
+        color: u64,
+        label: Option<&'a str>,
+    ) {
         self.values
             .push(bivectors.into_iter().map(|e| e.into()).collect());
         self.colors.push(color);
+        self.labels.push(label);
     }
 
     fn graph_json<W: Write>(&self, out: &mut W) -> std::result::Result<(), std::io::Error> {
@@ -51,13 +65,18 @@ impl GanjaGraph<'_> {
             if v.len() > 1 {
                 out.write(b"[")?;
             }
+
             let elems = v
                 .iter()
                 .map(|arr| format!("new Element({:?})", arr))
                 .collect::<Vec<_>>();
             out.write(elems.join(",").as_bytes())?;
+
             if v.len() > 1 {
                 out.write(b"]")?;
+            }
+            if let Some(label) = self.labels[i] {
+                out.write(format!(",\"{}\"", label).as_bytes())?;
             }
         }
         out.write(b"\n    ]")?;

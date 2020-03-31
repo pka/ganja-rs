@@ -79,19 +79,19 @@ fn main() -> std::result::Result<(), std::io::Error> {
         r: 0,
         ..Default::default()
     };
-    graph.add_bivector(p, 0x00FF0000);
-    graph.add_bivector(lp, 0xFF00FF);
-    graph.add_bivector(C1, 0x0000FF);
-    graph.add_bivector(C2, 0x888800);
-    graph.add_bivector(C3, 0x0088FF);
-    graph.add_bivector(C4, 0x008800);
-    graph.add_bivector(C5, 0x880000);
-    graph.add_bivector(L, 0);
-    graph.add_bivector(C, 0);
-    graph.add_bivector(P, 0xE0008800);
-    graph.add_bivector(P2, 0xaa000000);
-    graph.add_bivector(S, 0xE0FFFFFF);
-    graph.add_bivector(S2, 0xaa000000);
+    graph.add_bivector(p, 0x00FF0000, Some("s1")); // point
+    graph.add_bivector(lp, 0xFF00FF, Some("l&p")); // line intersect plane
+    graph.add_bivector(C1, 0x0000FF, Some("s&p")); // sphere meet plane
+    graph.add_bivector(C2, 0x888800, Some("s&l")); // sphere meet line
+    graph.add_bivector(C3, 0x0088FF, Some("s&s")); // sphere meet sphere
+    graph.add_bivector(C4, 0x008800, Some("s&c")); // sphere meet circle
+    graph.add_bivector(C5, 0x880000, Some("c&p")); // circle meet sphere
+    graph.add_bivector(L, 0, None); // line
+    graph.add_bivector(C, 0, None); // circle
+    graph.add_bivector(P, 0xE0008800, None); // plane
+    graph.add_bivector(P2, 0xaa000000, None);
+    graph.add_bivector(S, 0xE0FFFFFF, Some("s1")); // spheres
+    graph.add_bivector(S2, 0xaa000000, None);
 
     let fnout = "cga3d_intersections.html";
     println!("Writing {}", fnout);

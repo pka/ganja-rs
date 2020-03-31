@@ -69,8 +69,8 @@ fn main() -> std::result::Result<(), std::io::Error> {
         gl: false,
         ..Default::default()
     };
-    graph.add_bivectors(triangle, 0xffaaaa);
-    graph.add_bivectors(hexagon, 0xffaaaa);
+    graph.add_bivectors(triangle, 0xffaaaa, None);
+    graph.add_bivectors(hexagon, 0xffaaaa, None);
 
     let fnout = "pga2d_separating_axis.html";
     println!("Writing {}", fnout);

@@ -55,10 +55,10 @@ fn main() -> std::result::Result<(), std::io::Error> {
         r: 0,
         ..Default::default()
     };
-    graph.add_bivector(point, 0x0);
-    graph.add_bivector(line, 0xff0000);
-    graph.add_bivector(circle, 0x0000ff);
-    graph.add_bivector(plane, 0xaa000000);
+    graph.add_bivector(point, 0x0, None);
+    graph.add_bivector(line, 0xff0000, None);
+    graph.add_bivector(circle, 0x0000ff, None);
+    graph.add_bivector(plane, 0xaa000000, None);
 
     let fnout = "random.html";
     println!("Writing {}", fnout);
